@@ -45,3 +45,13 @@ the environment is built by light system
 ### Corridors
 
 create a prefab which can reflect the wave. The place hit by the wave will be lit.
+
+
+### Wave
+
+Main wave -> Fire
+Sub Wave -> rebound wave
+
+create a fireline from object pool
+
+use the line renderer to create the tail
