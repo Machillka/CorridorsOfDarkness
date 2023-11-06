@@ -33,7 +33,8 @@ public class PlayerController : MonoBehaviour
     public float tapSpeedMult;                  // Tap 移动增益
     public float fadeMult;                      // 淡出速率
     public float waitSec;                       // 等待淡出的时间
-    public float singleMoveExistTime;
+    public float singleMoveExistTime;           // 单次步长时间
+    public float mouseDistance;                 // 在距离内发射 ！
 
     private Vector3 mouseInWorldPos;
     private Vector3 mouseInScreenPos;
@@ -52,7 +53,6 @@ public class PlayerController : MonoBehaviour
 
         isSlowMoving = false;
         isMouseEvent = false;
-
 
         // 添加事件绑定
         inputController.PlayerGaming.MouseHold.performed += callback =>
