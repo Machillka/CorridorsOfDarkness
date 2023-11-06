@@ -33,7 +33,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""id"": ""d24e7c1c-2791-4f5a-ba8d-763315db8353"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Hold(duration=0.3,pressPoint=0.5),Press"",
+                    ""interactions"": ""Hold(duration=0.3,pressPoint=0.5),Press(pressPoint=0.3)"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -52,15 +52,6 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Press(pressPoint=0.2)"",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""MainMouse1"",
-                    ""type"": ""Button"",
-                    ""id"": ""5bd9d05e-e573-4032-aa50-1f55343ce052"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": ""Hold(duration=0.3,pressPoint=0.5),MultiTap(tapTime=0.2,tapDelay=0.4,pressPoint=0.3)"",
                     ""initialStateCheck"": false
                 }
             ],
@@ -111,28 +102,6 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""8573dc56-88d0-4151-9a23-de775645d7ca"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""MainMouse1"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d3e733ac-8f5d-4116-8ed3-03190208216f"",
-                    ""path"": ""<Touchscreen>/primaryTouch/tap"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""MainMouse1"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""68799017-05db-41a7-abf8-ee363099461d"",
                     ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
@@ -163,7 +132,6 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         m_PlayerGaming_MouseHold = m_PlayerGaming.FindAction("MouseHold", throwIfNotFound: true);
         m_PlayerGaming_MouseUp = m_PlayerGaming.FindAction("MouseUp", throwIfNotFound: true);
         m_PlayerGaming_MouseDown = m_PlayerGaming.FindAction("MouseDown", throwIfNotFound: true);
-        m_PlayerGaming_MainMouse1 = m_PlayerGaming.FindAction("MainMouse1", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -228,7 +196,6 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerGaming_MouseHold;
     private readonly InputAction m_PlayerGaming_MouseUp;
     private readonly InputAction m_PlayerGaming_MouseDown;
-    private readonly InputAction m_PlayerGaming_MainMouse1;
     public struct PlayerGamingActions
     {
         private @PlayerActions m_Wrapper;
@@ -236,7 +203,6 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         public InputAction @MouseHold => m_Wrapper.m_PlayerGaming_MouseHold;
         public InputAction @MouseUp => m_Wrapper.m_PlayerGaming_MouseUp;
         public InputAction @MouseDown => m_Wrapper.m_PlayerGaming_MouseDown;
-        public InputAction @MainMouse1 => m_Wrapper.m_PlayerGaming_MainMouse1;
         public InputActionMap Get() { return m_Wrapper.m_PlayerGaming; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -255,9 +221,6 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @MouseDown.started += instance.OnMouseDown;
             @MouseDown.performed += instance.OnMouseDown;
             @MouseDown.canceled += instance.OnMouseDown;
-            @MainMouse1.started += instance.OnMainMouse1;
-            @MainMouse1.performed += instance.OnMainMouse1;
-            @MainMouse1.canceled += instance.OnMainMouse1;
         }
 
         private void UnregisterCallbacks(IPlayerGamingActions instance)
@@ -271,9 +234,6 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @MouseDown.started -= instance.OnMouseDown;
             @MouseDown.performed -= instance.OnMouseDown;
             @MouseDown.canceled -= instance.OnMouseDown;
-            @MainMouse1.started -= instance.OnMainMouse1;
-            @MainMouse1.performed -= instance.OnMainMouse1;
-            @MainMouse1.canceled -= instance.OnMainMouse1;
         }
 
         public void RemoveCallbacks(IPlayerGamingActions instance)
@@ -296,6 +256,5 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         void OnMouseHold(InputAction.CallbackContext context);
         void OnMouseUp(InputAction.CallbackContext context);
         void OnMouseDown(InputAction.CallbackContext context);
-        void OnMainMouse1(InputAction.CallbackContext context);
     }
 }

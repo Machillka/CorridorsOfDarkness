@@ -23,7 +23,6 @@ public class PlayerController : MonoBehaviour
     private PlayerActions inputController;
     private Rigidbody2D rb;
     private SpriteRenderer footSprite;
-    private Animator playerAnimController;
 
     public float lowAlpha;                      // Control the image alpha, ranged in (0, 1)
     public float basicMoveSpeed;                // 基础移动速度
@@ -46,7 +45,6 @@ public class PlayerController : MonoBehaviour
         inputController = new PlayerActions();
         rb = GetComponent< Rigidbody2D >();
         footSprite = GetComponent< SpriteRenderer >();
-        playerAnimController = GetComponent< Animator >();
 
         isSlowMoving = false;
         isMouseEvent = false;
@@ -68,6 +66,7 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("Click");
                 mouseStatement = MouseStatement.singleClick;
 
+                // 上一次走完之后才 adapt 新的输入
                 if (isSlowMoving == false)
                 {
                     StartCoroutine(SlowMove());
@@ -110,12 +109,12 @@ public class PlayerController : MonoBehaviour
         if (mouseStatement == MouseStatement.holdMouse)
         {
             rb.velocity = Vector3.zero;
-            playerAnimController.SetTrigger("EndMoving");
             // playerAnimController.speed = 0f;
         }
 
         // 减小透明度
         StartCoroutine(FadeOutPlayer(waitSec, fadeMult));
+        
 
         // 处于_ 的状态, 则发射射线
         if (mouseStatement == 0)
@@ -146,7 +145,8 @@ public class PlayerController : MonoBehaviour
         {
             waitSec -= Time.deltaTime;
             // if isMouseEvent == true => 新的按键输入
-            if (isMouseEvent != false)
+            // 比如多次点击 tap, 就直接 break 不消失
+            if (isMouseEvent == true)
                 yield break;   
             yield return null;
         }
@@ -175,8 +175,6 @@ public class PlayerController : MonoBehaviour
     
     IEnumerator SlowMove()
     {
-        playerAnimController.SetTrigger("EndMoving");
-
         isSlowMoving = true;
 
         rb.velocity = moveDirection * tapSpeedMult;

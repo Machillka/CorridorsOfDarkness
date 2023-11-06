@@ -1,5 +1,5 @@
 {
-    "name": "PlayerInputs",
+    "name": "PlayerActions",
     "maps": [
         {
             "name": "PlayerGaming",
@@ -11,7 +11,7 @@
                     "id": "d24e7c1c-2791-4f5a-ba8d-763315db8353",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Hold(duration=0.3,pressPoint=0.5),Press",
+                    "interactions": "Hold(duration=0.3,pressPoint=0.5),Press(pressPoint=0.3)",
                     "initialStateCheck": false
                 },
                 {
@@ -30,15 +30,6 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "Press(pressPoint=0.2)",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "MainMouse1",
-                    "type": "Button",
-                    "id": "5bd9d05e-e573-4032-aa50-1f55343ce052",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Hold(duration=0.3,pressPoint=0.5),MultiTap(tapTime=0.2,tapDelay=0.4,pressPoint=0.3)",
                     "initialStateCheck": false
                 }
             ],
@@ -84,28 +75,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "MouseUp",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "8573dc56-88d0-4151-9a23-de775645d7ca",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MainMouse1",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d3e733ac-8f5d-4116-8ed3-03190208216f",
-                    "path": "<Touchscreen>/primaryTouch/tap",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MainMouse1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
