@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
+using UnityEngine.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour
 {
@@ -23,8 +24,10 @@ public class PlayerController : MonoBehaviour
     private PlayerActions inputController;
     private Rigidbody2D rb;
     private SpriteRenderer footSprite;
+    private Light2D playerLight;
 
-    public float lowAlpha;                      // Control the image alpha, ranged in (0, 1)
+    [Range(0, 1)]
+    public float lowAlpha;                      // Control the image 
     public float basicMoveSpeed;                // 基础移动速度
     public float holdSpeedMult;                 // Hold 移动增益
     public float tapSpeedMult;                  // Tap 移动增益
@@ -45,6 +48,7 @@ public class PlayerController : MonoBehaviour
         inputController = new PlayerActions();
         rb = GetComponent< Rigidbody2D >();
         footSprite = GetComponent< SpriteRenderer >();
+        playerLight = transform.Find("PlayerLight").GetComponent< Light2D >();
 
         isSlowMoving = false;
         isMouseEvent = false;
@@ -136,9 +140,11 @@ public class PlayerController : MonoBehaviour
         turnAngle *= Mathf.Sign(transform.position.x - mouseInWorldPos.x);
     }
 
+    //TODO 修复 Bug: 角色 连击 Tap => 多次 Press Up 发生的闪耀现象 ( 可能两个协程同时控制灯光 )
     IEnumerator FadeOutPlayer(float waitSec, float fadeMult)
     {
-        float alphaTemp = footSprite.color.a;
+        // float alphaTemp = footSprite.color.a;
+        float alphaTemp = playerLight.intensity;
 
         // 等待时刻, 不 fade out
         while (waitSec > 0f)
@@ -154,11 +160,13 @@ public class PlayerController : MonoBehaviour
         while(alphaTemp > 0.01f)
         {
             alphaTemp -= alphaTemp * fadeMult;
-            footSprite.color = new Color(1, 1, 1, alphaTemp);
+            // footSprite.color = new Color(1, 1, 1, alphaTemp);
+            playerLight.intensity = alphaTemp;
             yield return null;
         }
 
-        footSprite.color = new Color(1, 1, 1, 0);
+        // footSprite.color = new Color(1, 1, 1, 0);
+        playerLight.intensity = 0f;
     }
 
     IEnumerator FastMove()
@@ -167,7 +175,8 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = moveDirection * holdSpeedMult;
             transform.eulerAngles = new Vector3(0, 0, turnAngle);
-            footSprite.color = new Color(1, 1, 1, 1);
+            // footSprite.color = new Color(1, 1, 1, 1);
+            playerLight.intensity = 1f;
 
             yield return StartCoroutine(FlipFootSprite());
         }
@@ -179,7 +188,8 @@ public class PlayerController : MonoBehaviour
 
         rb.velocity = moveDirection * tapSpeedMult;
         transform.eulerAngles = new Vector3(0, 0, turnAngle);
-        footSprite.color = new Color(1, 1, 1, lowAlpha);
+        // footSprite.color = new Color(1, 1, 1, lowAlpha);
+        playerLight.intensity = lowAlpha;
 
         yield return StartCoroutine(FlipFootSprite());
 
