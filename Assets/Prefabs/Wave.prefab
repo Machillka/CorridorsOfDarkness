@@ -213,5 +213,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84145f39f1916f044a5e409301c15a53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireSpeed: 0
-  subCount: 0
+  alpha: 0.6
+  fireSpeed: 1
+  subCount: 5
+  initWaveLength: 5
+  maxMoveDistanve: 100
+  hitOffset: 0.3

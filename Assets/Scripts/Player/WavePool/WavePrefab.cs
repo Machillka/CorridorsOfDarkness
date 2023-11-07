@@ -16,6 +16,8 @@ public class WavePrefab : MonoBehaviour
     public float subCount;
     public float initWaveLength;
     public float maxMoveDistanve;                                       // 单次最远移动距离
+    public float hitOffset;
+
 
     private LineRenderer lrd;
 
@@ -23,11 +25,11 @@ public class WavePrefab : MonoBehaviour
     private Vector3 originPos;                                          // 起始点                   
     private Vector3 mouseInWorldPos;
     private Vector3 mouseInScreenPos;
-    private Vector3 moveDirection;
+    private Vector2 moveDirection;
     private Transform playerTransform;
 
-    private Vector3 moveStart;
-    private Vector3 moveEnd;
+    private Vector2 moveStart;
+    private Vector2 moveEnd;
 
     private RaycastHit2D rayInfo;
     private Ray2D waveRay;
@@ -49,8 +51,8 @@ public class WavePrefab : MonoBehaviour
         lrd.SetPosition(0, moveStart);
         lrd.SetPosition(1, moveEnd);
 
-        waveLength = Vector3.Distance(moveStart, moveEnd);
-        moveDistance = Vector3.Distance(moveEnd, originPos);                    // 移动距离就是射线末端到发射位置的距离
+        waveLength = Vector2.Distance(moveStart, moveEnd);
+        moveDistance = Vector2.Distance(moveEnd, originPos);                    // 移动距离就是射线末端到发射位置的距离
 
         // 初始还没射太远, 只修改末位置
         if (waveLength <= initWaveLength)
@@ -67,30 +69,35 @@ public class WavePrefab : MonoBehaviour
         if (moveDistance > maxMoveDistanve)
         {
             gameObject.SetActive(false);
+            Debug.Log("move too many");
         }
 
         // 可以击打, 距离很近, 结束
-        if (Vector3.Distance(moveEnd, rayInfo.point) < 0.03f)
+        if (Vector3.Distance(moveEnd, rayInfo.point) < hitOffset)
         {
             // Start sub wave()
             gameObject.SetActive(false);
+            Debug.Log("hit!!");
         }
+        Debug.Log("MoveEnd:" + moveEnd);
     }
 
     // 启动的时候 射！ 回收
     void OnEnable()
     {
-        Debug.Log("enable!");
         originPos = playerTransform.position;
         mouseInScreenPos = Mouse.current.position.ReadValue();
         mouseInWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseInScreenPos.x, mouseInScreenPos.y, 0));
 
-        moveDirection = (mouseInWorldPos - originPos).normalized;
+        moveDirection = (Vector2)(mouseInWorldPos - originPos).normalized;
 
         waveRay = new Ray2D(originPos, moveDirection);
         rayInfo= Physics2D.Raycast(waveRay.origin, waveRay.direction);
 
         moveStart = originPos;
         moveEnd = originPos;
+
+        Debug.DrawRay(originPos, moveDirection, Color.green);
+        Debug.Log(rayInfo.point);
     }
 }
