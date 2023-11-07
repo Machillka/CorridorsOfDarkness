@@ -28,18 +28,22 @@ public class PlayerController : MonoBehaviour
 
     [Range(0, 1)]
     public float lowAlpha;                      // Control the image 
+    [Range(0, 1)]
+    public float fadeMult;                      // 淡出速率
+
     public float basicMoveSpeed;                // 基础移动速度
     public float holdSpeedMult;                 // Hold 移动增益
     public float tapSpeedMult;                  // Tap 移动增益
-    public float fadeMult;                      // 淡出速率
     public float waitSec;                       // 等待淡出的时间
     public float singleMoveExistTime;           // 单次步长时间
-    public float mouseDistance;                 // 在距离内发射 ！
+    public float mouseDistanceRange;                 // 在距离内发射 ！
 
     private Vector3 mouseInWorldPos;
     private Vector3 mouseInScreenPos;
     private Vector3 moveDirection;
+    private Vector3 lastMousePos;
     private float turnAngle;
+    private float mouse2PlayerDistance;
 
     private bool isMouseEvent;
     private bool isSlowMoving;
@@ -57,30 +61,38 @@ public class PlayerController : MonoBehaviour
         // 添加事件绑定
         inputController.PlayerGaming.MouseHold.performed += callback =>
         {
+            lastMousePos = mouseInWorldPos;                 // 记录按下按键时的鼠标位置
+            mouse2PlayerDistance = Vector3.Distance(lastMousePos, transform.position);
+            // Debug.Log(mouse2PlayerDistance);
+
             isMouseEvent = true;
 
+            // 距离大 => move
+        
             if (callback.interaction is HoldInteraction)
             {
-                Debug.Log("Hold");
+                // Debug.Log("Hold");
                 mouseStatement = MouseStatement.holdMouse;
-                StartCoroutine(FastMove());
+                if (mouse2PlayerDistance > mouseDistanceRange)
+                    StartCoroutine(FastMove());
             }
             else
             {
-                Debug.Log("Click");
+                // Debug.Log("Click");
                 mouseStatement = MouseStatement.singleClick;
 
                 // 上一次走完之后才 adapt 新的输入
                 if (isSlowMoving == false)
                 {
-                    StartCoroutine(SlowMove());
+                    if (mouse2PlayerDistance > mouseDistanceRange)
+                        StartCoroutine(SlowMove());
                 }
             }
         };
 
         inputController.PlayerGaming.MouseUp.performed += callback =>
         {
-            Debug.Log("Press UP");
+            // Debug.Log("Press UP");
             isMouseEvent = false;
             PressUp();
 
@@ -90,8 +102,6 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        // 设置动画
-        
         // fade out the player
         StartCoroutine(FadeOutPlayer(waitSec + 0.3f, fadeMult));
     }
@@ -102,9 +112,11 @@ public class PlayerController : MonoBehaviour
         GetMoveParame();
     }
 
-    void FixedUpdate()
+    void FireWave()
     {
-        
+        // Debug.Log("Fire!");
+        var wave = WavePool.instance.GetObject();
+
     }
 
     void PressUp()
@@ -113,17 +125,16 @@ public class PlayerController : MonoBehaviour
         if (mouseStatement == MouseStatement.holdMouse)
         {
             rb.velocity = Vector3.zero;
-            // playerAnimController.speed = 0f;
         }
 
         // 减小透明度
         StartCoroutine(FadeOutPlayer(waitSec, fadeMult));
         
-
-        // 处于_ 的状态, 则发射射线
-        if (mouseStatement == 0)
+        // 上一次长按 + 在触发距离内, 则发射射线
+        // Debug.Log(mouseStatement);
+        if (mouseStatement == MouseStatement.holdMouse && mouse2PlayerDistance < mouseDistanceRange)
         {
-            // Fire();
+            FireWave();
         }
     }
 
