@@ -36,7 +36,8 @@ public class PlayerController : MonoBehaviour
     public float tapSpeedMult;                  // Tap 移动增益
     public float waitSec;                       // 等待淡出的时间
     public float singleMoveExistTime;           // 单次步长时间
-    public float mouseDistanceRange;                 // 在距离内发射 ！
+    public float mouseDistanceRange;            // 在距离内发射 ！
+    public float fireLightExistTime;            // 发射时候存在照明时间
 
     private Vector3 mouseInWorldPos;
     private Vector3 mouseInScreenPos;
@@ -47,6 +48,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isMouseEvent;
     private bool isSlowMoving;
+    private bool isFiring;
 
     void Awake()
     {
@@ -67,7 +69,7 @@ public class PlayerController : MonoBehaviour
 
             isMouseEvent = true;
 
-            // 距离大 => move
+            // 距离足够大 => move
         
             if (callback.interaction is HoldInteraction)
             {
@@ -116,7 +118,7 @@ public class PlayerController : MonoBehaviour
     {
         // Debug.Log("Fire!");
         var wave = WavePool.instance.GetObject();
-
+        StartCoroutine(FireLight());                             
     }
 
     void PressUp()
@@ -127,15 +129,19 @@ public class PlayerController : MonoBehaviour
             rb.velocity = Vector3.zero;
         }
 
-        // 减小透明度
-        StartCoroutine(FadeOutPlayer(waitSec, fadeMult));
-        
         // 上一次长按 + 在触发距离内, 则发射射线
         // Debug.Log(mouseStatement);
         if (mouseStatement == MouseStatement.holdMouse && mouse2PlayerDistance < mouseDistanceRange)
         {
+            isFiring = true;
+            // 发射
             FireWave();
         }
+            
+        // 减小透明度 , 如果没在发射直接减少透明度
+        if (isFiring != true)
+            StartCoroutine(FadeOutPlayer(waitSec, fadeMult));
+
     }
 
     void GetMoveParame()
@@ -171,13 +177,28 @@ public class PlayerController : MonoBehaviour
         while(alphaTemp > 0.01f)
         {
             alphaTemp -= alphaTemp * fadeMult;
-            // footSprite.color = new Color(1, 1, 1, alphaTemp);
             playerLight.intensity = alphaTemp;
             yield return null;
         }
 
-        // footSprite.color = new Color(1, 1, 1, 0);
         playerLight.intensity = 0f;
+    }
+
+    // 发射的时候先亮一会, 然后 fade out
+    IEnumerator FireLight()
+    {
+        // float timer = fireLightExistTime;
+        playerLight.intensity = 1f;
+
+        yield return new WaitForSeconds(fireLightExistTime);
+
+        // while (timer > 0f)
+        // {
+        //     timer -= Time.deltaTime;
+        //     yield return null;
+        // }
+
+        StartCoroutine(FadeOutPlayer(waitSec, fadeMult));
     }
 
     IEnumerator FastMove()
