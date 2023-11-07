@@ -17,6 +17,7 @@ public class WavePrefab : MonoBehaviour
     public float initWaveLength;
     public float maxMoveDistanve;                                       // 单次最远移动距离
     public float hitOffset;
+    public LayerMask detectiveLayer;
 
 
     private LineRenderer lrd;
@@ -65,12 +66,6 @@ public class WavePrefab : MonoBehaviour
             moveEnd += fireSpeed * moveDirection;
         }        
         
-        // 移动距离过
-        if (moveDistance > maxMoveDistanve)
-        {
-            gameObject.SetActive(false);
-            Debug.Log("move too many");
-        }
 
         // 可以击打, 距离很近, 结束
         if (Vector3.Distance(moveEnd, rayInfo.point) < hitOffset)
@@ -79,7 +74,14 @@ public class WavePrefab : MonoBehaviour
             gameObject.SetActive(false);
             Debug.Log("hit!!");
         }
-        Debug.Log("MoveEnd:" + moveEnd);
+        
+        // 移动距离过
+        if (moveDistance > maxMoveDistanve)
+        {
+            gameObject.SetActive(false);
+            Debug.Log("move too many");
+        }
+        // Debug.Log("MoveEnd:" + moveEnd);
     }
 
     // 启动的时候 射！ 回收
@@ -92,12 +94,11 @@ public class WavePrefab : MonoBehaviour
         moveDirection = (Vector2)(mouseInWorldPos - originPos).normalized;
 
         waveRay = new Ray2D(originPos, moveDirection);
-        rayInfo= Physics2D.Raycast(waveRay.origin, waveRay.direction);
+        rayInfo= Physics2D.Raycast(waveRay.origin, waveRay.direction, Mathf.Infinity, detectiveLayer);
 
         moveStart = originPos;
         moveEnd = originPos;
-
-        Debug.DrawRay(originPos, moveDirection, Color.green);
+        
         Debug.Log(rayInfo.point);
     }
 }

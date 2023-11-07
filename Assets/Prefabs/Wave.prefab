@@ -216,6 +216,9 @@ MonoBehaviour:
   alpha: 0.6
   fireSpeed: 1
   subCount: 5
-  initWaveLength: 5
+  initWaveLength: 2
   maxMoveDistanve: 100
   hitOffset: 0.3
+  detectiveLayer:
+    serializedVersion: 2
+    m_Bits: 128

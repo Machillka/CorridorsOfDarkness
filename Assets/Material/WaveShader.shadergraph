@@ -244,6 +244,34 @@
             },
             "m_InputSlot": {
                 "m_Node": {
+                    "m_Id": "0bc124f9e1624d4ba10c9664063b1697"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "876ac2ad564548058921455e5872104d"
+                },
+                "m_SlotId": 2
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "1b52d51e60c04070ba7a232502d8e1ec"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "876ac2ad564548058921455e5872104d"
+                },
+                "m_SlotId": 2
+            },
+            "m_InputSlot": {
+                "m_Node": {
                     "m_Id": "f1877d219c5d45ae976f798018bfd3b8"
                 },
                 "m_SlotId": 1
@@ -328,37 +356,9 @@
             },
             "m_InputSlot": {
                 "m_Node": {
-                    "m_Id": "1b52d51e60c04070ba7a232502d8e1ec"
-                },
-                "m_SlotId": 0
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
-                    "m_Id": "f1877d219c5d45ae976f798018bfd3b8"
-                },
-                "m_SlotId": 2
-            },
-            "m_InputSlot": {
-                "m_Node": {
                     "m_Id": "fb7af6688ef84289aebad40800479b5e"
                 },
                 "m_SlotId": 1
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
-                    "m_Id": "fb7af6688ef84289aebad40800479b5e"
-                },
-                "m_SlotId": 2
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "0bc124f9e1624d4ba10c9664063b1697"
-                },
-                "m_SlotId": 0
             }
         }
     ],
@@ -2883,7 +2883,7 @@
         "x"
     ],
     "m_Precision": 0,
-    "m_PreviewExpanded": true,
+    "m_PreviewExpanded": false,
     "m_DismissedVersion": 0,
     "m_PreviewMode": 0,
     "m_CustomColors": {
@@ -2998,7 +2998,7 @@
         "x"
     ],
     "m_Precision": 0,
-    "m_PreviewExpanded": true,
+    "m_PreviewExpanded": false,
     "m_DismissedVersion": 0,
     "m_PreviewMode": 0,
     "m_CustomColors": {

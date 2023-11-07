@@ -1,13 +1,11 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using Unity.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
 using UnityEngine.Rendering.Universal;
+
+//TODO 统一 Vectior2 和 Vector3
 
 public class PlayerController : MonoBehaviour
 {
@@ -36,19 +34,23 @@ public class PlayerController : MonoBehaviour
     public float tapSpeedMult;                  // Tap 移动增益
     public float waitSec;                       // 等待淡出的时间
     public float singleMoveExistTime;           // 单次步长时间
-    public float mouseDistanceRange;            // 在距离内发射 ！
+    //TODO 检测鼠标射线是否在 player 上, 如果是 => Fire; 不是 => 移动
     public float fireLightExistTime;            // 发射时候存在照明时间
 
     private Vector3 mouseInWorldPos;
     private Vector3 mouseInScreenPos;
     private Vector3 moveDirection;
-    private Vector3 lastMousePos;
+
+    private RaycastHit2D rayInfo;
+    private Ray ray;
+
     private float turnAngle;
-    private float mouse2PlayerDistance;
 
     private bool isMouseEvent;
     private bool isSlowMoving;
     private bool isFiring;
+    private bool isMouseOnPlayer;
+    private bool isMouseOnPlayerPressed;
 
     void Awake()
     {
@@ -63,19 +65,15 @@ public class PlayerController : MonoBehaviour
         // 添加事件绑定
         inputController.PlayerGaming.MouseHold.performed += callback =>
         {
-            lastMousePos = mouseInWorldPos;                 // 记录按下按键时的鼠标位置
-            mouse2PlayerDistance = Vector3.Distance(lastMousePos, transform.position);
-            // Debug.Log(mouse2PlayerDistance);
+            isMouseOnPlayerPressed = MouseJudgement();
 
             isMouseEvent = true;
-
-            // 距离足够大 => move
-        
+    
             if (callback.interaction is HoldInteraction)
             {
                 // Debug.Log("Hold");
                 mouseStatement = MouseStatement.holdMouse;
-                if (mouse2PlayerDistance > mouseDistanceRange)
+                if (!isMouseOnPlayerPressed)
                     StartCoroutine(FastMove());
             }
             else
@@ -86,7 +84,7 @@ public class PlayerController : MonoBehaviour
                 // 上一次走完之后才 adapt 新的输入
                 if (isSlowMoving == false)
                 {
-                    if (mouse2PlayerDistance > mouseDistanceRange)
+                    if (!isMouseOnPlayerPressed)
                         StartCoroutine(SlowMove());
                 }
             }
@@ -112,26 +110,28 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         GetMoveParame();
+        // 实时监测 鼠标位置
+        isMouseOnPlayer = MouseJudgement();
     }
 
     void FireWave()
     {
-        // Debug.Log("Fire!");
+        Debug.Log("Fire!");
         var wave = WavePool.instance.GetObject();
-        StartCoroutine(FireLight());                             
+        StartCoroutine(FireLight());                         
     }
 
     void PressUp()
     {
         // reset the velocity and animation
-        if (mouseStatement == MouseStatement.holdMouse)
+        if (mouseStatement == MouseStatement.holdMouse || isMouseOnPlayer)
         {
             rb.velocity = Vector3.zero;
         }
 
-        // 上一次长按 + 在触发距离内, 则发射射线
-        // Debug.Log(mouseStatement);
-        if (mouseStatement == MouseStatement.holdMouse && mouse2PlayerDistance < mouseDistanceRange)
+        // 上一次长按 + 鼠标在玩家上, 则发射射线
+        // 
+        if (mouseStatement == MouseStatement.holdMouse && isMouseOnPlayerPressed)
         {
             isFiring = true;
             // 发射
@@ -140,8 +140,9 @@ public class PlayerController : MonoBehaviour
             
         // 减小透明度 , 如果没在发射直接减少透明度
         if (isFiring != true)
+        {
             StartCoroutine(FadeOutPlayer(waitSec, fadeMult));
-
+        }
     }
 
     void GetMoveParame()
@@ -155,6 +156,22 @@ public class PlayerController : MonoBehaviour
 
         turnAngle = Vector2.Angle((Vector2)moveDirection, Vector3.up);
         turnAngle *= Mathf.Sign(transform.position.x - mouseInWorldPos.x);
+    }
+
+    bool MouseJudgement()
+    {
+        ray = Camera.main.ScreenPointToRay(mouseInScreenPos);
+        rayInfo = Physics2D.Raycast(new Vector2(ray.origin.x, ray.origin.y), Vector2.zero, Mathf.Infinity);
+
+        if(rayInfo)
+        {
+            if (rayInfo.collider.gameObject.tag == "Player")
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     //TODO 修复 Bug: 角色 连击 Tap => 多次 Press Up 发生的闪耀现象 ( 可能两个协程同时控制灯光 )
@@ -192,22 +209,20 @@ public class PlayerController : MonoBehaviour
 
         yield return new WaitForSeconds(fireLightExistTime);
 
-        // while (timer > 0f)
-        // {
-        //     timer -= Time.deltaTime;
-        //     yield return null;
-        // }
-
         StartCoroutine(FadeOutPlayer(waitSec, fadeMult));
+        isFiring = false;
     }
 
     IEnumerator FastMove()
     {
         while (isMouseEvent == true)
         {
-            rb.velocity = moveDirection * holdSpeedMult;
+            if (isMouseOnPlayer)
+                rb.velocity = Vector2.zero;
+            else
+                rb.velocity = moveDirection * holdSpeedMult;
+
             transform.eulerAngles = new Vector3(0, 0, turnAngle);
-            // footSprite.color = new Color(1, 1, 1, 1);
             playerLight.intensity = 1f;
 
             yield return StartCoroutine(FlipFootSprite());
