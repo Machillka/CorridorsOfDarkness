@@ -43,6 +43,7 @@ public class WavePrefab : MonoBehaviour
 
     // 启用后执行
     // 发射一段距离之后取消 || 触碰到物体
+    //TODO 射线的渐变
     void Update()
     {
         lrd.SetPosition(0, moveStart);
@@ -62,7 +63,11 @@ public class WavePrefab : MonoBehaviour
             moveEnd += fireSpeed * moveDirection;
         }        
         
-        
+        // 移动距离过
+        if (moveDistance > maxMoveDistanve)
+        {
+            gameObject.SetActive(false);
+        }
 
         // 可以击打, 距离很近, 结束
         if (Vector3.Distance(moveEnd, rayInfo.point) < 0.03f)
@@ -70,8 +75,6 @@ public class WavePrefab : MonoBehaviour
             // Start sub wave()
             gameObject.SetActive(false);
         }
-
-
     }
 
     // 启动的时候 射！ 回收
