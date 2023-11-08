@@ -118,7 +118,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -876546973899608171, guid: b3f5a7b023ecf0a43938af257bd3467a, type: 3}
+  - {fileID: 2100000, guid: 4bb90f7644383174c88adb010d7405d5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -149,8 +149,8 @@ LineRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.108543396
-        value: 0.48469353
+        time: 0
+        value: 0.2675289
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -191,7 +191,7 @@ LineRenderer:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
-    numCapVertices: 2
+    numCapVertices: 90
     alignment: 0
     textureMode: 0
     textureScale: {x: 1, y: 1}
@@ -218,7 +218,7 @@ MonoBehaviour:
   subCount: 5
   initWaveLength: 2
   maxMoveDistanve: 100
-  hitOffset: 0.3
+  hitOffset: 0.03
   detectiveLayer:
     serializedVersion: 2
     m_Bits: 128
